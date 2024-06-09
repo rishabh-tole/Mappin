@@ -2,8 +2,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 
+/**
+ * Utility class for converting images to boolean arrays representing maps.
+ */
 public class MapConverter {
 
+    /**
+     * Converts an image to a boolean array representing a map.
+     * @param imagePath The path to the image file.
+     * @return A Map object representing the converted image.
+     */
     public static Map convertImageToBooleanArray(String imagePath) {
         try {
             // Load the image
@@ -37,6 +45,13 @@ public class MapConverter {
             return null;
         }
     }
+
+    /**
+     * Pads the given boolean array with the specified padding.
+     * @param original The original boolean array.
+     * @param padding The amount of padding to add around the original array.
+     * @return A Map object representing the padded array.
+     */
     public static Map padArray(boolean[][] original, int padding) {
         int originalHeight = original.length;
         int originalWidth = original[0].length;
@@ -44,8 +59,6 @@ public class MapConverter {
         int newWidth = originalWidth + 2 * padding;
 
         boolean[][] paddedArray = new boolean[newHeight][newWidth];
-
-        // Fill the paddedArray with false by default (no need to explicitly do this as default boolean value is false)
 
         // Copy the original array to the new padded array
         for (int y = 0; y < originalHeight; y++) {

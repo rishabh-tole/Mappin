@@ -3,11 +3,19 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Provides a graphical representation of a map.
+ */
 public class MapPrinter extends JFrame {
 
     private boolean[][] map;
     private int scale;
 
+    /**
+     * Constructs a MapPrinter with the specified map and scale.
+     * @param map The boolean array representing the map.
+     * @param scale The scale factor for printing.
+     */
     public MapPrinter(boolean[][] map, int scale) {
         this.map = map;
         this.scale = scale;
@@ -45,6 +53,11 @@ public class MapPrinter extends JFrame {
         }
     }
 
+    /**
+     * Prints the map using the specified scale.
+     * @param map The map to print.
+     * @param scale The scale factor for printing.
+     */
     public static void printMap(Map map, int scale) {
         boolean[][] mapData = map.getBooleanArray();
         new MapPrinter(mapData, scale);

@@ -1,12 +1,20 @@
-public class Map implements IMap{
+/**
+ * Represents a map implementation.
+ */
+public class Map implements IMap {
     final String REDBOX = "\u001B[41m  \u001B[0m"; // Red box
     final String BLUEBOX = "\u001B[44m  \u001B[0m"; // Blue box
     final String YELLOWBOX = "\u001B[43m  \u001B[0m"; // Yellow Box
     private boolean[][] map;
 
+    /**
+     * Constructs a new Map object with the specified map.
+     * @param map The boolean array representing the map.
+     */
     public Map(boolean[][] map){
         this.map = map;
     }
+
     @Override
     public boolean getValueAt(int r, int c) {
         return map[r][c];

@@ -1,29 +1,48 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Represents a JFrame-based output for path visualization.
+ */
 public class JFrameOutput extends JFrame implements IOutput {
 
     private static final int TILE_SIZE = 20; // Size of each tile in pixels
     private int[][] positions;
 
+    /**
+     * Constructs a new JFrameOutput with the specified configuration.
+     * @param cfg The configuration for the JFrameOutput.
+     */
     public JFrameOutput(Config cfg) {
         setTitle("Path Visualization");
-        setSize(cfg.getPinx()*20, cfg.getPiny()*20); // Set window size
+        setSize(cfg.getPinx() * 20, cfg.getPiny() * 20); // Set window size
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
+    /**
+     * Updates the JFrameOutput with new positions.
+     * @param positions The new positions to update with.
+     */
     @Override
     public void update(Positions positions) {
         this.positions = positions.getPositions();
         repaint(); // Repaint the window to update the display
     }
 
+    /**
+     * Initializes the JFrameOutput with positions.
+     * @param positions The positions to initialize with.
+     */
     @Override
     public void initialize(Positions positions) {
         update(positions);
     }
 
+    /**
+     * Paints the JFrameOutput.
+     * @param g The graphics object.
+     */
     @Override
     public void paint(Graphics g) {
         super.paint(g);

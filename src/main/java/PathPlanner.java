@@ -1,8 +1,14 @@
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * Provides methods for planning paths on maps.
+ */
 public class PathPlanner {
 
+    /**
+     * Represents a node in the path planning algorithm.
+     */
     static class Node {
         int x, y;
         Node parent;
@@ -14,6 +20,15 @@ public class PathPlanner {
         }
     }
 
+    /**
+     * Plans a path on the map from the initial pose to the target pose.
+     *
+     * @param map         The map on which to plan the path.
+     * @param initialPose The initial pose.
+     * @param targetPose  The target pose.
+     * @param resizeWidth The width to resize the path.
+     * @return A Map object representing the planned path.
+     */
     static Map planPath(Map map, Pose initialPose, Pose targetPose, int resizeWidth) {
         boolean[][] originalMap = map.getBooleanArray();
         int height = originalMap.length;
@@ -82,6 +97,14 @@ public class PathPlanner {
         return new Map(new boolean[height][width]);
     }
 
+    /**
+     * Finds the closest path tile to the specified position on the map.
+     *
+     * @param map The map to search.
+     * @param x   The x-coordinate of the position.
+     * @param y   The y-coordinate of the position.
+     * @return The closest path tile as a Node object, or null if not found.
+     */
     private static Node findClosestPathTile(boolean[][] map, int x, int y) {
         int height = map.length;
         int width = map[0].length;
@@ -106,7 +129,8 @@ public class PathPlanner {
                 int newY = current.y + dy[i];
 
                 // Check if the new position is within bounds and not visited
-                if (newX >= 0 && newX < width && newY >= 0 && newY < height && !visited[newY][newX]) {
+                if (newX >= 0 &&
+                        newX < width && newY >= 0 && newY < height && !visited[newY][newX]) {
                     queue.add(new Node(newX, newY, current));
                     visited[newY][newX] = true;
                 }
@@ -115,6 +139,14 @@ public class PathPlanner {
         return null; // No path tile found
     }
 
+    /**
+     * Widens the path on the map according to the specified scaling factor.
+     *
+     * @param pathMap     The original path map.
+     * @param originalMap The original map.
+     * @param scaleFactor The scaling factor.
+     * @return The widened path map.
+     */
     private static boolean[][] widenPath(boolean[][] pathMap, boolean[][] originalMap, int scaleFactor) {
         int height = pathMap.length;
         int width = pathMap[0].length;

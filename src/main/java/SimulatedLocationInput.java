@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+/**
+ * Simulates location input from user commands.
+ */
 public class SimulatedLocationInput implements IInput {
 
     private int x;
@@ -9,6 +12,10 @@ public class SimulatedLocationInput implements IInput {
     private Scanner scanner;
     private final int STEP = 15;
 
+    /**
+     * Initializes the simulated location input.
+     * @return The initial pose.
+     */
     @Override
     public Pose init() {
         scanner = new Scanner(System.in);
@@ -18,6 +25,10 @@ public class SimulatedLocationInput implements IInput {
         return new Pose(x, y, orientation);
     }
 
+    /**
+     * Updates the simulated location input based on user commands.
+     * @return The updated pose.
+     */
     @Override
     public Pose update() {
 
@@ -66,6 +77,11 @@ public class SimulatedLocationInput implements IInput {
         return new Pose(x, y, orientation);
     }
 
+    /**
+     * Moves the simulated location.
+     * @param dir The direction.
+     * @param mag The magnitude.
+     */
     private void move(int dir, int mag){
         double realDir = Math.toRadians(Math.floorMod(orientation + dir, 360));
         this.x += Math.sin(realDir) * mag;

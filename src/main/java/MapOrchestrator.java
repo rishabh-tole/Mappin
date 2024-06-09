@@ -1,3 +1,6 @@
+/**
+ * Orchestrates the mapping process.
+ */
 public class MapOrchestrator {
     Config cfg;
     IInput input;
@@ -8,6 +11,10 @@ public class MapOrchestrator {
     private final int RESIZE_WIDTH = 5;
     private final int PRINT_SCALE = 2;
 
+    /**
+     * Constructs a MapOrchestrator with the specified configuration.
+     * @param cfg The configuration for the orchestrator.
+     */
     public MapOrchestrator(Config cfg){
         this.cfg = cfg;
         if (cfg.getInputType().equals("simulated")){
@@ -24,6 +31,10 @@ public class MapOrchestrator {
         positionCalculator = new PositionCalculator(cfg);
     }
 
+    /**
+     * Initializes the mapping process with the target pose.
+     * @param targetPose The target pose.
+     */
     public void initialize(Pose targetPose){
         // Get initial positions
         Pose initialPose = input.init();
@@ -31,17 +42,10 @@ public class MapOrchestrator {
         // Construct Map
         map = MapConverter.convertImageToBooleanArray(cfg.getMapPath());
         map = MapConverter.padArray(map.getBooleanArray(), Math.max(cfg.getPinx(), cfg.getPiny())+1);
-        MapPrinter.printMap(map, PRINT_SCALE);
-
-        System.out.println("============================ Original Map ==========================================");
-        System.out.println("\n \n \n \n");
 
         //Path Plan
         map = PathPlanner.planPath(map, initialPose, targetPose, RESIZE_WIDTH);
         MapPrinter.printMap(map, PRINT_SCALE);
-
-        System.out.println("============================== Path Planned Map =================================");
-        System.out.println("\n \n \n \n");
 
         //Calculate initial output positions
         Positions initialOutputPositions = positionCalculator.initialize(initialPose, map);
@@ -50,9 +54,12 @@ public class MapOrchestrator {
         output.initialize(initialOutputPositions);
     }
 
+    /**
+     * Updates the mapping process.
+     */
     public void update(){
 
-        //Update pose from the newest information given  by input
+        //Update pose from the newest information given by input
         Pose currentPose = input.update();
 
         //Calculate new positions
