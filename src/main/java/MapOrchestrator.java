@@ -17,9 +17,16 @@ public class MapOrchestrator {
      */
     public MapOrchestrator(Config cfg){
         this.cfg = cfg;
+        // Choose Inputs
         if (cfg.getInputType().equals("simulated")){
             input = new SimulatedLocationInput();
         }
+        if (cfg.getInputType().equals("mother")){
+            input = new MotherInput();
+        }
+
+
+        // Choose Outputs
         if (cfg.getOutputType().equals("ascii")){
             output = new SimulatedASCIIOutput();
         }
