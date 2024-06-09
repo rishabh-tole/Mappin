@@ -5,6 +5,8 @@ public class MapOrchestrator {
 
     Map map;
     PositionCalculator positionCalculator;
+    private final int RESIZE_WIDTH = 5;
+    private final int PRINT_SCALE = 3;
 
     public MapOrchestrator(Config cfg){
         this.cfg = cfg;
@@ -25,38 +27,34 @@ public class MapOrchestrator {
         // Construct Map
         map = MapConverter.convertImageToBooleanArray(cfg.getMapPath());
         map = MapConverter.padArray(map.getBooleanArray(), Math.max(cfg.getPinx(), cfg.getPiny())+1);
-        map.printColor(3);
+        map.printColor(PRINT_SCALE);
 
         System.out.println("============================ Original Map ==========================================");
         System.out.println("\n \n \n \n");
 
         //Path Plan
-        Map pathPlannedMap = PathPlanner.planPath(map, initialPose, targetPose, 5);
+        map = PathPlanner.planPath(map, initialPose, targetPose, RESIZE_WIDTH);
 
-        pathPlannedMap.printColor(3);
+        map.printColor(PRINT_SCALE);
 
         System.out.println("============================== Path Planned Map =================================");
         System.out.println("\n \n \n \n");
 
         //Calculate initial output positions
-        Positions initialOutputPositions = positionCalculator.initialize(initialPose, pathPlannedMap);
+        Positions initialOutputPositions = positionCalculator.initialize(initialPose, map);
 
         //Set initial output positions
         output.initialize(initialOutputPositions);
-
-
     }
 
-    public void update(Pose targetPose){
+    public void update(){
 
         //Update pose from the newest information given  by input
         Pose currentPose = input.update();
 
-        //Path plan
-        Map pathPlannedMap = PathPlanner.planPath(map, targetPose, currentPose, 5);
 
         //Calculate new positions
-        Positions outputPositions = positionCalculator.update(currentPose, pathPlannedMap);
+        Positions outputPositions = positionCalculator.update(currentPose, map);
 
         //Update the output the positions
         output.update(outputPositions);

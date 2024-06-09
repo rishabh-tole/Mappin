@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         //Stick to odd numbers for now for pin x and pin y
 
-        Config cfg = new Config(21,31,2, "simulated", "ascii", "TestMap.png");
+        Config cfg = new Config(11,17,3, "simulated", "ascii", "TestMap.png");
 
         MapOrchestrator mo = new MapOrchestrator(cfg);
 
@@ -15,8 +15,7 @@ public class Main {
         mo.initialize(target);
 
         while (true){
-            mo.update(target);
+            mo.update();
         }
-
     }
 }

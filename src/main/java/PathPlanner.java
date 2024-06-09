@@ -14,7 +14,7 @@ public class PathPlanner {
         }
     }
 
-    static Map planPath(Map map, Pose initialPose, Pose targetPose, int scaleFactor) {
+    static Map planPath(Map map, Pose initialPose, Pose targetPose, int resizeWidth) {
         boolean[][] originalMap = map.getBooleanArray();
         int height = originalMap.length;
         int width = originalMap[0].length;
@@ -74,7 +74,7 @@ public class PathPlanner {
             }
 
             // Widen the path according to the scale factor
-            boolean[][] widenedPathMap = widenPath(pathMap, originalMap, scaleFactor);
+            boolean[][] widenedPathMap = widenPath(pathMap, originalMap, resizeWidth);
             return new Map(widenedPathMap);
         }
 
