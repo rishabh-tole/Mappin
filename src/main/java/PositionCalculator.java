@@ -47,7 +47,6 @@ public class PositionCalculator {
                 }
             }
         }
-
         return new Positions(pinMap);
     }
 }

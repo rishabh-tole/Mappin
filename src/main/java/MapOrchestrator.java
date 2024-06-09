@@ -6,7 +6,7 @@ public class MapOrchestrator {
     Map map;
     PositionCalculator positionCalculator;
     private final int RESIZE_WIDTH = 5;
-    private final int PRINT_SCALE = 3;
+    private final int PRINT_SCALE = 2;
 
     public MapOrchestrator(Config cfg){
         this.cfg = cfg;
@@ -15,6 +15,10 @@ public class MapOrchestrator {
         }
         if (cfg.getOutputType().equals("ascii")){
             output = new SimulatedASCIIOutput();
+        }
+
+        if (cfg.getOutputType().equals("jframe")){
+            output = new JFrameOutput(cfg);
         }
 
         positionCalculator = new PositionCalculator(cfg);
@@ -27,15 +31,14 @@ public class MapOrchestrator {
         // Construct Map
         map = MapConverter.convertImageToBooleanArray(cfg.getMapPath());
         map = MapConverter.padArray(map.getBooleanArray(), Math.max(cfg.getPinx(), cfg.getPiny())+1);
-        map.printColor(PRINT_SCALE);
+        MapPrinter.printMap(map, PRINT_SCALE);
 
         System.out.println("============================ Original Map ==========================================");
         System.out.println("\n \n \n \n");
 
         //Path Plan
         map = PathPlanner.planPath(map, initialPose, targetPose, RESIZE_WIDTH);
-
-        map.printColor(PRINT_SCALE);
+        MapPrinter.printMap(map, PRINT_SCALE);
 
         System.out.println("============================== Path Planned Map =================================");
         System.out.println("\n \n \n \n");
@@ -51,7 +54,6 @@ public class MapOrchestrator {
 
         //Update pose from the newest information given  by input
         Pose currentPose = input.update();
-
 
         //Calculate new positions
         Positions outputPositions = positionCalculator.update(currentPose, map);

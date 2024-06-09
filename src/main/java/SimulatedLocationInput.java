@@ -12,8 +12,8 @@ public class SimulatedLocationInput implements IInput {
     @Override
     public Pose init() {
         scanner = new Scanner(System.in);
-        this.x = 211;
-        this.y = 271;
+        this.x = 103;
+        this.y = 232;
         this.orientation = 0;
         return new Pose(x, y, orientation);
     }

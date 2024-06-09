@@ -6,11 +6,11 @@ public class Main {
     public static void main(String[] args) {
         //Stick to odd numbers for now for pin x and pin y
 
-        Config cfg = new Config(11,17,3, "simulated", "ascii", "TestMap.png");
+        Config cfg = new Config(11,17,3, "simulated", "jframe", "NewMap.png");
 
         MapOrchestrator mo = new MapOrchestrator(cfg);
 
-        Pose target = new Pose(466,306,0);
+        Pose target = new Pose(213,301,0);
 
         mo.initialize(target);
 

@@ -11,7 +11,6 @@ public class Positions{
         return positions[r][c];
     }
 
-
     public int getWidth() {
         return positions[0].length;
     }
@@ -21,8 +20,7 @@ public class Positions{
         return positions.length;
     }
 
-
-    public int[][] getBooleanArray() {
+    public int[][] getPositions() {
         return positions;
     }
 }
