@@ -25,7 +25,6 @@ public class MapOrchestrator {
             input = new MotherInput();
         }
 
-
         // Choose Outputs
         if (cfg.getOutputType().equals("ascii")){
             output = new SimulatedASCIIOutput();
@@ -49,6 +48,7 @@ public class MapOrchestrator {
         // Construct Map
         map = MapConverter.convertImageToBooleanArray(cfg.getMapPath());
         map = MapConverter.padArray(map.getBooleanArray(), Math.max(cfg.getPinx(), cfg.getPiny())+1);
+        MapPrinter.printMap(map, PRINT_SCALE);
 
         //Path Plan
         map = PathPlanner.planPath(map, initialPose, targetPose, RESIZE_WIDTH);
