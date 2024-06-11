@@ -2,8 +2,16 @@ import network
 import uasyncio as asyncio
 import usocket as socket
 import urandom
+import servo_positions_buffer
 
 #Initialize Buffer
+
+position_buffer = servo_positions_buffer.ServoPositionsBuffer()
+
+#Only start taks on even numbers of connections since we will always connect 1 input and 1 output
+global counter
+counter = 0
+
 
 # Connect to Wi-Fi
 def connect_to_wifi(ssid, password):
@@ -30,16 +38,28 @@ async def send_random_values(writer):
     finally:
         await writer.aclose()
 
+async def set_servo_positions(position_buffer):
+    while True:
+        print(position_buffer.get_newest_position())
+        await asyncio.sleep(3)
+
+
+
 async def handle_client(reader, writer):
     try:
         # Start the task to send random values in the background
-        asyncio.create_task(send_random_values(writer))
-
+        global counter
+        if (counter%2==0):
+            asyncio.create_task(send_random_values(writer))
+            asyncio.create_task(set_servo_positions(position_buffer))
+        counter+=1
         while True:
             # Receive data from the client
             data = await reader.readline()
             if data:
-                print(str(data.decode().strip()))
+                pos_string = str(data.decode().strip())
+                #print(pos_string)
+                position_buffer.add_position(pos_string)
                 await asyncio.sleep(0.5)
 
             await asyncio.sleep(0.1)

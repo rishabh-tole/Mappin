@@ -10,12 +10,10 @@ class ServoPositionsBuffer:
             # If buffer is full, discard the oldest position and append the new one
             self.buffer.pop(0)
             self.buffer.append(position)
-            print("Buffer is full. Discarding oldest position and adding new position:", position)
 
     def get_newest_position(self):
         if self.buffer:
             newest_position = self.buffer[-1]
-            self.buffer.clear()
             return newest_position
         else:
             return None
