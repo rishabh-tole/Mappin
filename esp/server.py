@@ -4,11 +4,13 @@ import usocket as socket
 import urandom
 import servo_positions_buffer
 import imu_dumper
+from machine import Pin
 
-#Initialize Buffer
+#Initialize Stuff
 
 position_buffer = servo_positions_buffer.ServoPositionsBuffer()
 sensor = imu_dumper.MotionDetector()
+p = Pin(2, Pin.IN)
 
 #Only start taks on even numbers of connections since we will always connect 1 input and 1 output
 global counter
@@ -26,13 +28,12 @@ def connect_to_wifi(ssid, password):
             pass
     print('Wi-Fi connected:', wlan.ifconfig())
 
-
-
 async def send_random_values(writer):
     try:
         while True:
             # Generate and send random values to the client
-            random_values = [sensor.get_calibrated_gyro_values(), sensor.get_calibrated_accel_values()]
+            #random_values = [sensor.get_calibrated_gyro_values(), sensor.get_calibrated_accel_values()]
+            random_values = [sensor.get_calibrated_gyro_values(), [p.value(), -1,-1]]
             await writer.awrite(f"{random_values}\n")
             await asyncio.sleep(0.1)
     except OSError as e:

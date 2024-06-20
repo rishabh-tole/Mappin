@@ -7,17 +7,23 @@ public class IMUProcessor {
         // Convert gyro readings from radians to degrees
         float gyroZ = (float) Math.toDegrees(gyro[2]);
 
-        // Update heading
-        heading += gyroZ * dt;
+        // Update heading (clockwise direction)
+        heading -= gyroZ * dt;
+
+        // Ensure heading stays within 0-360 degrees
+        if (heading < 0) {
+            heading += 360;
+        } else if (heading >= 360) {
+            heading -= 360;
+        }
 
         // Integrate acceleration to get velocity (assumes accel is in m/s^2 and dt is in seconds)
-        // TODO: bro ts does not work :(
-        //velocityX += accel[0] * dt;
-        //velocityY += accel[1] * dt;
+//        velocityX += accel[0] * dt;
+//        velocityY += accel[1] * dt;
 
         // Integrate velocity to get position (convert from meters to centimeters)
-        //posX += velocityX * dt * 100;
-        //posY += velocityY * dt * 100;
+//        posX += velocityX * dt * 100;
+//        posY += velocityY * dt * 100;
     }
 
     public float[] getPosition() {

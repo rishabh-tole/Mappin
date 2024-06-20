@@ -11,6 +11,9 @@ public class ESPIMULocationInput implements IInput {
     private IMUProcessor imuProcessor = new IMUProcessor();
     private Pose currentPose = new Pose(0, 0, 0);
 
+    private int x;
+    private int y;
+
     public ESPIMULocationInput() {
         connectToWebSocket();
     }
@@ -29,8 +32,11 @@ public class ESPIMULocationInput implements IInput {
     @Override
     public Pose init() {
         // Initialization code (if needed)
+        this.x = 103;
+        this.y = 232;
         lastTime = System.currentTimeMillis();
-        return currentPose; // Initial pose (x, y, heading)
+        currentPose = new Pose(x, y, 0);
+        return currentPose;
     }
 
     @Override
@@ -65,11 +71,15 @@ public class ESPIMULocationInput implements IInput {
                 imuProcessor.update(gyro, accelerometer, dt);
 
                 // Get the updated position and heading
-                float[] position = imuProcessor.getPosition();
+                //float[] position = imuProcessor.getPosition();
                 float heading = imuProcessor.getHeading();
 
+                if (accelerometer[0] == 1){
+                    move((int) heading, 10);
+                }
+
                 // Return the updated pose
-                currentPose = new Pose((int) position[0], (int) position[1], (int) heading);
+                currentPose = new Pose(x, y, (int) heading);
                 return currentPose;
             }
         } catch (IOException e) {
@@ -113,5 +123,10 @@ public class ESPIMULocationInput implements IInput {
         }
 
         return array;
+    }
+    private void move(int dir, int mag){
+        double realDir = Math.toRadians(Math.floorMod(dir, 360));
+        this.x += Math.sin(realDir) * mag;
+        this.y -= Math.cos(realDir) * mag;
     }
 }

@@ -25,6 +25,10 @@ public class MapOrchestrator {
             input = new MotherInput();
         }
 
+        if (cfg.getInputType().equals("esp")){
+            input = new ESPIMULocationInput();
+        }
+
         // Choose Outputs
         if (cfg.getOutputType().equals("ascii")){
             output = new SimulatedASCIIOutput();
