@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Represents a JFrame-based output for path visualization.
@@ -7,7 +9,9 @@ import java.awt.*;
 public class JFrameOutput extends JFrame implements IOutput {
 
     private static final int TILE_SIZE = 20; // Size of each tile in pixels
+    private static final int UPDATE_INTERVAL = 300; // Update interval in milliseconds (0.1 seconds)
     private int[][] positions;
+    private Timer timer;
 
     /**
      * Constructs a new JFrameOutput with the specified configuration.
@@ -15,9 +19,18 @@ public class JFrameOutput extends JFrame implements IOutput {
      */
     public JFrameOutput(Config cfg) {
         setTitle("Path Visualization");
-        setSize(cfg.getPinx() * 20, cfg.getPiny() * 20); // Set window size
+        setSize(cfg.getPinx() * TILE_SIZE, cfg.getPiny() * TILE_SIZE); // Set window size
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+
+        // Create and start a timer that updates the display every 0.1 seconds
+        timer = new Timer(UPDATE_INTERVAL, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                repaint();
+            }
+        });
+        timer.start();
     }
 
     /**
@@ -27,7 +40,6 @@ public class JFrameOutput extends JFrame implements IOutput {
     @Override
     public void update(Positions positions) {
         this.positions = positions.getPositions();
-        repaint(); // Repaint the window to update the display
     }
 
     /**
