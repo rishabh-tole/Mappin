@@ -8,18 +8,20 @@ public class Pose {
 
     /**
      * Constructs a new Pose object with the specified coordinates and orientation.
+     *
      * @param x The x-coordinate.
      * @param y The y-coordinate.
      * @param o The orientation.
      */
-    public Pose(int x, int y, int o){
-        this.x=x;
-        this.y=y;
+    public Pose(int x, int y, int o) {
+        this.x = x;
+        this.y = y;
         this.orientation = o;
     }
 
     /**
      * Gets the x-coordinate of the pose.
+     *
      * @return The x-coordinate.
      */
     public int getX() {
@@ -28,6 +30,7 @@ public class Pose {
 
     /**
      * Gets the y-coordinate of the pose.
+     *
      * @return The y-coordinate.
      */
     public int getY() {
@@ -36,9 +39,18 @@ public class Pose {
 
     /**
      * Gets the orientation of the pose.
+     *
      * @return The orientation.
      */
     public int getOrientation() {
         return orientation;
+    }
+
+    public String toString() {
+        return "Pose{" +
+                "x=" + x +
+                ", y=" + y +
+                ", heading=" + orientation +
+                '}';
     }
 }

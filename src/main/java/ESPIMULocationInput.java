@@ -7,6 +7,9 @@ public class ESPIMULocationInput implements IInput {
 
     private Socket socket;
     private BufferedReader in;
+    private long lastTime = 0;
+    private IMUProcessor imuProcessor = new IMUProcessor();
+    private Pose currentPose = new Pose(0, 0, 0);
 
     public ESPIMULocationInput() {
         connectToWebSocket();
@@ -26,7 +29,8 @@ public class ESPIMULocationInput implements IInput {
     @Override
     public Pose init() {
         // Initialization code (if needed)
-        return new Pose(0, 0, 0); // Initial pose (x, y, heading)
+        lastTime = System.currentTimeMillis();
+        return currentPose; // Initial pose (x, y, heading)
     }
 
     @Override
@@ -42,15 +46,31 @@ public class ESPIMULocationInput implements IInput {
             String message = null;
             if (in.ready()) {
                 message = in.readLine();
-            } else {
-                System.out.println("Message not ready");
             }
 
             if (message != null) {
                 // Process received gyro data and compute pose
-                // For now, print the received data
                 System.out.println("Received gyro data: " + message);
-                // You can add code here to process the message and update the Pose
+
+                double[][] array = dataToArray(message);
+                double[] gyro = array[0];
+                double[] accelerometer = array[1];
+
+                // Calculate time difference since last update
+                long currentTime = System.currentTimeMillis();
+                float dt = (currentTime - lastTime) / 1000.0f; // Convert ms to seconds
+                lastTime = currentTime;
+
+                // Update IMUProcessor with new data
+                imuProcessor.update(gyro, accelerometer, dt);
+
+                // Get the updated position and heading
+                float[] position = imuProcessor.getPosition();
+                float heading = imuProcessor.getHeading();
+
+                // Return the updated pose
+                currentPose = new Pose((int) position[0], (int) position[1], (int) heading);
+                return currentPose;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -64,7 +84,34 @@ public class ESPIMULocationInput implements IInput {
             }
         }
 
-        // Dummy update logic since gyro data is received via WebSocket
-        return new Pose(0, 0, 0); // Update this logic as needed
+        // Return a default pose if there's no update
+        return currentPose;
+    }
+
+    private double[][] dataToArray(String str){
+        str = str.substring(1, str.length() - 1);
+
+        // Split the string into rows
+        String[] rows = str.split("\\], \\[");
+
+        // Create a 2D array
+        double[][] array = new double[rows.length][];
+
+        // Process each row
+        for (int i = 0; i < rows.length; i++) {
+            // Remove any remaining brackets
+            rows[i] = rows[i].replace("[", "").replace("]", "");
+
+            // Split the row into individual numbers
+            String[] values = rows[i].split(", ");
+
+            // Convert the string values to doubles and store in the array
+            array[i] = new double[values.length];
+            for (int j = 0; j < values.length; j++) {
+                array[i][j] = Double.parseDouble(values[j]);
+            }
+        }
+
+        return array;
     }
 }

@@ -3,10 +3,12 @@ import uasyncio as asyncio
 import usocket as socket
 import urandom
 import servo_positions_buffer
+import imu_dumper
 
 #Initialize Buffer
 
 position_buffer = servo_positions_buffer.ServoPositionsBuffer()
+sensor = imu_dumper.MotionDetector()
 
 #Only start taks on even numbers of connections since we will always connect 1 input and 1 output
 global counter
@@ -30,7 +32,7 @@ async def send_random_values(writer):
     try:
         while True:
             # Generate and send random values to the client
-            random_values = [urandom.random() for _ in range(3)]
+            random_values = [sensor.get_calibrated_gyro_values(), sensor.get_calibrated_accel_values()]
             await writer.awrite(f"{random_values}\n")
             await asyncio.sleep(0.1)
     except OSError as e:
@@ -41,7 +43,7 @@ async def send_random_values(writer):
 async def set_servo_positions(position_buffer):
     while True:
         print(position_buffer.get_newest_position())
-        await asyncio.sleep(3)
+        await asyncio.sleep(10)
 
 
 
@@ -60,8 +62,6 @@ async def handle_client(reader, writer):
                 pos_string = str(data.decode().strip())
                 #print(pos_string)
                 position_buffer.add_position(pos_string)
-                await asyncio.sleep(0.5)
-
             await asyncio.sleep(0.1)
     except OSError as e:
         if e.args[0] == 104:
@@ -84,7 +84,7 @@ async def main():
     while True:
         print("Server up for " + str(i) + " seconds")
         i+=1
-        await asyncio.sleep(1)  # Keep the event loop running
+        await asyncio.sleep(10)  # Keep the event loop running
 
 # Run the event loop
 asyncio.run(main())

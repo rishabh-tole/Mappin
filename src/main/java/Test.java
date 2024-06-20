@@ -7,11 +7,13 @@ public class Test {
 
         DeviceOutput deviceOutput = new DeviceOutput();
 
-        deviceOutput.initialize(new Positions( new int[10][10]));
+        deviceOutput.initialize(new Positions(new int[10][10]));
 
-        while (true){
+        while (true) {
             deviceOutput.update(new Positions(new int[10][10]));
-            espimuLocationInput.update();
+            Pose p = espimuLocationInput.update();
+
+            System.out.println(p);
 
             Thread.sleep(100);
         }
