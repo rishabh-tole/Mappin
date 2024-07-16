@@ -4,7 +4,8 @@
 public class MapOrchestrator {
     Config cfg;
     IInput input;
-    IOutput output;
+
+    IOutput[] outputs;
 
     Map map;
     PositionCalculator positionCalculator;
@@ -13,62 +14,76 @@ public class MapOrchestrator {
 
     /**
      * Constructs a MapOrchestrator with the specified configuration.
+     *
      * @param cfg The configuration for the orchestrator.
      */
-    public MapOrchestrator(Config cfg){
+    public MapOrchestrator(Config cfg) {
         this.cfg = cfg;
         // Choose Inputs
-        if (cfg.getInputType().equals("simulated")){
+        if (cfg.getInputType().equals("simulated")) {
             input = new SimulatedLocationInput();
         }
-        if (cfg.getInputType().equals("mother")){
+        if (cfg.getInputType().equals("mother")) {
             input = new MotherInput();
         }
 
-        if (cfg.getInputType().equals("esp")){
+        if (cfg.getInputType().equals("esp")) {
             input = new ESPIMULocationInput();
         }
 
         // Choose Outputs
-        if (cfg.getOutputType().equals("ascii")){
-            output = new SimulatedASCIIOutput();
+        if (cfg.getOutputType().equals("ascii")) {
+            outputs = new IOutput[]{new SimulatedASCIIOutput()};
         }
 
-        if (cfg.getOutputType().equals("jframe")){
-            output = new JFrameOutput(cfg);
+        if (cfg.getOutputType().equals("jframe")) {
+            outputs = new IOutput[]{new JFrameOutput(cfg)};
         }
 
         positionCalculator = new PositionCalculator(cfg);
+
+
+        //TEST
+        outputs = new IOutput[]{
+                new JFrameOutput(cfg),
+                new DeviceOutput(),
+                new Compressed4x4JframeOutput()
+        };
+        //TEST
     }
 
     /**
      * Initializes the mapping process with the target pose.
+     *
      * @param targetPose The target pose.
      */
-    public void initialize(Pose targetPose){
+    public void initialize(Pose targetPose) {
         // Get initial positions
         Pose initialPose = input.init();
 
         // Construct Map
         map = MapConverter.convertImageToBooleanArray(cfg.getMapPath());
-        map = MapConverter.padArray(map.getBooleanArray(), Math.max(cfg.getPinx(), cfg.getPiny())+1);
-        MapPrinter.printMap(map, PRINT_SCALE);
+        map = MapConverter.padArray(map.getBooleanArray(), Math.max(cfg.getPinx(), cfg.getPiny()) + 1);
+        //MapPrinter.printMap(map, PRINT_SCALE);
 
         //Path Plan
         map = PathPlanner.planPath(map, initialPose, targetPose, RESIZE_WIDTH);
-        MapPrinter.printMap(map, PRINT_SCALE);
+        //MapPrinter.printMap(map, PRINT_SCALE);
 
         //Calculate initial output positions
         Positions initialOutputPositions = positionCalculator.initialize(initialPose, map);
 
         //Set initial output positions
-        output.initialize(initialOutputPositions);
+
+        for (IOutput output:outputs) {
+            output.initialize(initialOutputPositions);
+        }
     }
 
     /**
      * Updates the mapping process.
      */
-    public void update(){
+    public void update() {
 
         //Update pose from the newest information given by input
         Pose currentPose = input.update();
@@ -77,7 +92,10 @@ public class MapOrchestrator {
         Positions outputPositions = positionCalculator.update(currentPose, map);
 
         //Update the output the positions
-        output.update(outputPositions);
+        for (IOutput output:outputs) {
+            output.update(outputPositions);
+        }
+
         System.out.println("============================= New Positions =================================");
     }
 }

@@ -40,6 +40,8 @@ public class JFrameOutput extends JFrame implements IOutput {
     @Override
     public void update(Positions positions) {
         this.positions = positions.getPositions();
+
+
     }
 
     /**
