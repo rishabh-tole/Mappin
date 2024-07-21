@@ -5,16 +5,26 @@ import urandom
 import servo_positions_buffer
 import imu_dumper
 from machine import Pin
+import time
+from machine import Pin, I2C
+from servo import Servos
 
 #Initialize Stuff
 
 position_buffer = servo_positions_buffer.ServoPositionsBuffer()
 sensor = imu_dumper.MotionDetector()
-p = Pin(2, Pin.IN)
+p = Pin(34, Pin.IN)
+
+i2c = I2C(scl=Pin(22), sda=Pin(21))
+servos = Servos(i2c)
 
 #Only start taks on even numbers of connections since we will always connect 1 input and 1 output
 global counter
 counter = 0
+
+#initialize positions to zero
+for x in range(16):
+    servos.position(x, 0)
 
 
 # Connect to Wi-Fi
@@ -41,18 +51,48 @@ async def send_random_values(writer):
     finally:
         await writer.aclose()
 
+
 async def set_servo_positions(position_buffer):
     while True:
-        print(position_buffer.get_newest_position())
-        await asyncio.sleep(10)
+        pos = position_buffer.get_newest_position()
+
+        oned = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        if pos is not None:
+            oned = parse_positions(pos)
+
+        print(oned)
+
+        # Servo mappings: [servo_index] = [original_index]
+        servo_mappings = [3, 7, 11, 15, 2, 6, 10, 14, 1, 5, 9, 13, 0, 4, 8, 12]
+
+        for i in range(16):
+            # Get the actual servo index from the mapping
+            servo_index = servo_mappings[i]
+
+            if oned[i] == 0:
+                servos.position(servo_index, 0)
+            elif oned[i] == 1:
+                servos.position(servo_index, 180)
+
+            time.sleep_ms(100)
+
+        await asyncio.sleep(0.1)
 
 
+def parse_positions(json_string):
+    # Remove unwanted characters and split the string
+    json_string = json_string.replace('{"positions": ', '').replace('}', '')
+    json_string = json_string.replace('[', '').replace(']', '')
+
+    # Split by commas and convert to integers
+    one_d_array = [int(num) for num in json_string.split(',') if num]
+    return one_d_array
 
 async def handle_client(reader, writer):
     try:
         # Start the task to send random values in the background
         global counter
-        if (counter%2==0):
+        if (counter%1==0):
             asyncio.create_task(send_random_values(writer))
             asyncio.create_task(set_servo_positions(position_buffer))
         counter+=1

@@ -39,17 +39,19 @@ public class MapOrchestrator {
         if (cfg.getOutputType().equals("jframe")) {
             outputs = new IOutput[]{new JFrameOutput(cfg)};
         }
-
+        //DEMO
+        if (cfg.getOutputType().equals("demo")) {
+            outputs = new IOutput[]{
+                    new JFrameOutput(cfg),
+                    new DeviceOutput(),
+                    new Compressed4x4JframeOutput()
+            };
+        }
+        //DEMO
         positionCalculator = new PositionCalculator(cfg);
 
 
-        //TEST
-        outputs = new IOutput[]{
-                new JFrameOutput(cfg),
-                new DeviceOutput(),
-                new Compressed4x4JframeOutput()
-        };
-        //TEST
+
     }
 
     /**

@@ -92,5 +92,3 @@ class MotionDetector:
         ay = self.imu.acceleration[1] - self.ACCEL_OFFSETS_CONST[1]
         az = self.imu.acceleration[2] - self.ACCEL_OFFSETS_CONST[2]
         return [ax, ay, az]
-
-

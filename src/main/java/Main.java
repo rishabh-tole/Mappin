@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         //Stick to odd numbers for now for pin x and pin y
 
-        Config cfg = new Config(11,17,3, "simulated", "jframe", "NewMap.png");
+        Config cfg = new Config(11,17,3, "simulated", "demo", "NewMap.png");
 
         MapOrchestrator mo = new MapOrchestrator(cfg);
 
